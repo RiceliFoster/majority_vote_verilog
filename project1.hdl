@@ -1,0 +1,98 @@
+
+
+CHIP project1 {
+
+    // Define input and outputs
+    // We have four judges, so four inputs
+    // We need to decide a tie and a majority, so two outputs
+    IN a, b, c, d;
+    OUT out, tie;
+
+    PARTS:
+
+    // Define not's early on for ease of use later
+    Not(in = a, out = aNot);
+    Not(in = b, out = bNot);
+    Not(in = c, out = cNot);
+    Not(in = d, out = dNot);
+
+    // Each section correlates to a portion of the...
+    // Boolean logic derived from the 16 outputs given by the
+    // ...truth table I created. (2^4 = 16 combinations)
+
+    // a'b'cd
+    And(a = aNot, b = b, out = temp1);
+    And(a = c, b = d, out = temp2);
+    And(a = temp1 , b = temp2, out = temp3);
+
+    // abcd
+    And(a = a, b = b, out = temp4);
+    And(a = c, b = d, out = temp5);
+    And(a = temp4, b = temp5, out = temp6);
+
+    // abcd'
+    And(a = a, b = b , out = temp7);
+    And(a = c, b = dNot, out = temp8);
+    And(a = temp7 , b = temp8 , out = temp9);
+
+    // ab'cd
+    And(a = a, b = bNot, out = temp15);
+    And(a = c, b = d, out = temp16);
+    And(a = temp15, b = temp16, out = temp17);
+
+    // abc'd
+    And(a = a, b = b, out = temp10);
+    And(a = cNot, b = d, out = temp11);
+    And(a = temp10 , b = temp11, out= temp12);
+
+    // a'bcd + abcd
+    Or(a = temp3, b = temp6 , out = temp13);
+    Or(a = temp9, b = temp17, out = temp14);
+
+    // abcd' + ab'cd + abc'd
+    Or(a = temp13, b = temp14, out=temp20 );
+    Or(a = temp20, b = temp12, out = out);
+
+    /* For ties, I used the same logic as above,
+     ...deriving these from my truth table. I realize now,
+     ...that I could have simplified these much earlier on...
+     using boolean algebra and re-using chip outputs I already
+     ... had created.
+    */
+
+    And(a = aNot, b = bNot, out = var1);
+    And(a = c, b = d, out = var2);
+    And(a = var1, b = var2, out = var3);
+
+    And(a = aNot, b = b, out = var4);
+    And(a = c, b = dNot, out = var5);
+    And(a = var4, b = var5, out = var6);
+
+    And(a = a, b = b, out = var7);
+    And(a = cNot, b = dNot, out = var8);
+    And(a = var7, b = var8, out = var9);
+
+    And(a = a, b = bNot, out = var10);
+    And(a = cNot, b = d, out = var11);
+    And(a = var10, b = var11, out = var12);
+
+    And(a = aNot, b = b, out = var13);
+    And(a = cNot, b = d, out = var14);
+    And(a = var13, b = var14, out = var15);
+
+    And(a = a, b = bNot, out = var16);
+    And(a = c, b = dNot, out = var17);
+    And(a = var16, b = var17, out = var18);
+
+    Or(a = var3, b = var6, out = var19);
+    Or(a = var9, b = var12, out = var20);
+    Or(a = var15, b = var18, out = var21);
+    
+    Or(a = var19, b = var20, out = var22);
+    Or(a = var22, b = var21, out = tie);
+
+    
+
+
+
+}
